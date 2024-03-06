@@ -5,7 +5,7 @@ import speech_recognition as sr
 
 import csv
 
-key=[]
+key="都你在講"
 def Voice_To_Text(duration=7): 
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -21,9 +21,32 @@ def Voice_To_Text(duration=7):
     return Text
 #while click
 Text=Voice_To_Text(10)
-key[0]=Text
-a=key.split()
+a=Text.split()
+print(a)
+#read from csv 因為如果重複出現 那一定是挺暈的對吧?
 
+
+#get from csv
+csv_path="store.csv"
+
+
+def Scoring(text):
+    filtered_keywords=list(filter(lambda text: any(text),a))
+    if any(filtered_keywords):
+        print("成功")
+    
+    
+with open(csv_path, newline='', encoding='utf-8') as csvfile:
+   # 讀取 CSV 檔案內容
+  rows = csv.reader(csvfile)
+
+  # 以迴圈輸出每一列
+  for row in rows:
+    for i in row:
+        Scoring(i)
+
+    
+    
 # csv_path = "output.csv"
 # header = ["Text"]
 # with open(csv_path, "w", newline="", encoding="utf-8") as csv_file:
