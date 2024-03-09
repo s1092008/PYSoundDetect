@@ -36,8 +36,13 @@ wf.setframerate(fs)
 wf.writeframes(b''.join(frames))
 wf.close()
 
+
 # 使用 SpeechRecognition 來辨識錄音中的文字
 recognizer = sr.Recognizer()
+audio = recognizer.listen(stream, phrase_time_limit=7)
+text = recognizer.recognize_google(audio, language='zh-TW')  # 识别中文
+print(text)
+
 with sr.AudioFile(filename) as source:
     audio_data = recognizer.record(source)
     text = recognizer.recognize_google(audio_data, language='zh-TW')  # 识别中文

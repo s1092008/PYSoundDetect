@@ -9,6 +9,7 @@ key="都你在講"
 def Voice_To_Text(duration=7): 
     r = sr.Recognizer()
     with sr.Microphone() as source:
+        print(type(source))
         print("請開始說話:")
         r.adjust_for_ambient_noise(source)
         audio = r.listen(source, phrase_time_limit=duration)
