@@ -1,0 +1,20 @@
+#define Relay 8
+String str;
+void setup() {
+  pinMode(Relay, OUTPUT);
+  Serial.begin(9600);
+  digitalWrite(Relay, HIGH);
+}
+void loop() {
+  if (Serial.available()) {
+    str = Serial.readStringUntil('\n');
+ 
+    if (str == "go") {          
+        digitalWrite(Relay, LOW);     // 通電
+        Serial.println("Relay is ON"); // 回應訊息給電腦
+    } else if (str == "stop") {
+        digitalWrite(Relay, HIGH);
+        Serial.println("Relay is OFF");
+    }
+  }
+}
