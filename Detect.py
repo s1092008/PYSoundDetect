@@ -2,15 +2,18 @@
 #pip install SpeechRecognition
 
 import speech_recognition as sr
-
+import serial
 import csv
 
+
+ser=serial.Serial('COM3',9600)
 key="都你在講"
-def Voice_To_Text(duration=7): 
+
+def Voice_To_Text(duration=10): 
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print(type(source))
-        print("請開始說話:")
+        # print(type(source))
+        # print("請開始說話:")
         r.adjust_for_ambient_noise(source)
         audio = r.listen(source, phrase_time_limit=duration)
     try:
@@ -20,11 +23,6 @@ def Voice_To_Text(duration=7):
     except sr.RequestError as e:
         Text = "無法翻譯{0}".format(e)
     return Text
-#while click
-Text=Voice_To_Text(10)
-a=Text.split()
-print(a)
-#read from csv 因為如果重複出現 那一定是挺暈的對吧?
 
 
 #get from csv
@@ -35,8 +33,11 @@ def Scoring(text):
     filtered_keywords=list(filter(lambda text: any(text),a))
     if any(filtered_keywords):
         print("成功")
-    
-    
+        ser.write(b'go')
+    else:
+        ser.write(b'stop')
+        
+
 with open(csv_path, newline='', encoding='utf-8') as csvfile:
    # 讀取 CSV 檔案內容
   rows = csv.reader(csvfile)
@@ -46,7 +47,10 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
     for i in row:
         Scoring(i)
 
-    
+
+while a:
+    Text=Voice_To_Text(10)
+    a=Text.split()
     
 # csv_path = "output.csv"
 # header = ["Text"]
