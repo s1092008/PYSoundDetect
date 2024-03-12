@@ -12,6 +12,8 @@ void loop() {
     if (str == "go") {          
         digitalWrite(Relay, LOW);     // 通電
         Serial.println("Relay is ON"); // 回應訊息給電腦
+	delay(5000); // 保持通電 1 秒
+  	digitalWrite(relayPin, HIGH);
     } else if (str == "stop") {
         digitalWrite(Relay, HIGH);
         Serial.println("Relay is OFF");
