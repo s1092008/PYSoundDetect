@@ -27,11 +27,11 @@ def Voice_To_Text(duration=10):
 
 #get from csv
 csv_path="store.csv"
-
+store_text=[]
 
 def Scoring(text):
-    filtered_keywords=list(filter(lambda text: any(text),a))
-    if any(filtered_keywords):
+    # filtered_keywords=list(filter(lambda text: any(text),a))
+    if text in store_text:
         print("成功")
         ser.write(b'go')
     else:
@@ -44,13 +44,16 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
 
   # 以迴圈輸出每一列
   for row in rows:
+    store_text.extend(row)
     for i in row:
         Scoring(i)
 
 
-while a:
+while word:
     Text=Voice_To_Text(10)
-    a=Text.split()
+    word=Text.split()
+    for word in store_text:
+        Scoring(word)
     
 # csv_path = "output.csv"
 # header = ["Text"]
