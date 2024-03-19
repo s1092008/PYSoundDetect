@@ -10,6 +10,7 @@ fs = 44100                       # 取樣頻率，常見值為 44100 ( CD )、48
 seconds = 5                      # 錄音秒數
 filename = "teststudio.wav"      # 錄音檔名
 ser = serial.Serial('COM3', 9600)
+# serLight=serial.Serial('COM4',12800)
 
 p = pyaudio.PyAudio()            #      建立 pyaudio 物件
 
@@ -48,5 +49,6 @@ print(Text)
 x='沈'
 if x in text:
     ser.write(b'go')
-else:
+    # serLight.write(b'go')
+# else:
     ser.write(b'stop')
