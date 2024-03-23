@@ -1,7 +1,4 @@
-#define Relay 8
-#define BL 3
-#define RL 4
-#define GL 5
+#define Relay 9
 String str;
 void setup() {
   pinMode(Relay, OUTPUT);
@@ -11,18 +8,11 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     str = Serial.readStringUntil('\n');
- 
-    if (str == "go") {          
-        digitalWrite(Relay, LOW);     // 通電
-        delay(5000);
-        digitalWrite(BL,HIGH);
-        digitalWrite(Relay, HIGH);
-    } else if (str == "stop") {
-        digitalWrite(Relay, HIGH);
-        digitalWrite(RL,HIGH);
-    }
-  }
-  else{
-    digitalWrite(GL.HIGH);
+    Serial.println(str);  
+    if (str == "go") {             
+      digitalWrite(Relay, LOW);
+      delay(3000);
+      digitalWrite(Relay, HIGH);
+    } 
   }
 }
