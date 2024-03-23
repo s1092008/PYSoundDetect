@@ -2,6 +2,7 @@ import pyaudio
 import wave
 import speech_recognition as sr
 import serial
+import os
 
 chunk = 1024                     # 記錄聲音的樣本區塊大小
 sample_format = pyaudio.paInt16  # 樣本格式，可使用 paFloat32、paInt32、paInt24、paInt16、paInt8、paUInt8、paCustomFormat
@@ -31,12 +32,19 @@ p.terminate()
 
 print('錄音結束...')
 
-# 將原始音訊資料儲存到 WAV 檔案中
-with wave.open(filename, 'wb') as wf:
-    wf.setnchannels(channels)
-    wf.setsampwidth(p.get_sample_size(sample_format))
-    wf.setframerate(fs)
-    wf.writeframes(b''.join(frames))
+# check if file exist
+def save_wav_file(filename, channels, sample_format, fs, frames):
+    if os.path.exists(filename):
+        filename = filename.split('.')[0] + '1.' + filename.split('.')[1]
+    # 將原始音訊資料儲存到 WAV 檔案中
+    with wave.open(filename, 'wb') as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(p.get_sample_size(sample_format))
+        wf.setframerate(fs)
+        wf.writeframes(b''.join(frames))       
+
+save_wav_file(filename, channels, sample_format, fs, frames)
+
 
 # 使用 SpeechRecognition 來辨識錄音中的文字
 recognizer = sr.Recognizer()
@@ -46,9 +54,10 @@ with sr.AudioFile(filename) as source:
 
 Text=text.split()
 print(Text)
-x='沈'
+x='我'
 if x in text:
     ser.write(b'go')
+    print('go')
     # serLight.write(b'go')
-# else:
+else:
     ser.write(b'stop')
