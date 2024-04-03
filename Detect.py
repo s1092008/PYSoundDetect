@@ -23,6 +23,7 @@ def Voice_To_Text(duration=10):
         audio = r.listen(source, phrase_time_limit=duration)
     try:
         Text = r.recognize_google(audio, language="zh-TW")
+    
     except sr.UnknownValueError:
         Text = "無法翻譯"
     except sr.RequestError as e:
