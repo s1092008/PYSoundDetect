@@ -1,0 +1,22 @@
+#define Relay 10
+
+void setup() {
+  pinMode(Relay, INPUT); 
+  Serial.begin(9600);
+}
+
+void loop() {
+  int switchState = digitalRead(Relay);
+  
+  if (switchState == LOW) {
+    
+    Serial.println("start");
+    
+    while (digitalRead(Relay) == HIGH) {
+      delay(200);
+    }
+  }    
+  
+  delay(200);
+}
+
