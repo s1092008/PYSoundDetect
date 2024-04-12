@@ -7,7 +7,7 @@ ser = serial.Serial('COM4', 9600)
 
 def waitforsign():
             line = ser.readline().decode('utf-8').rstrip()
-            if line == "start":
+            if line is not None:
                 subprocess.Popen(["python", "Detect.py"])
                 print('ohoh')
                 
