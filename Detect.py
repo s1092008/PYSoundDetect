@@ -36,18 +36,32 @@ csv_path="store.csv"
 store_text=[]
 
 def Scoring(text):
-    # filtered_keywords=list(filter(lambda text: any(text),a))
-    # if text in store_text:
-    #     print(text)
-    #     ser.write(b'go')
-    # else:
-    #     ser.write(b'stop')
-    for keyword in store_text:
-        if keyword in text:
-            print("成功")
-            ser.write(b'go')
-            return
-    return
+    index = binary_search(store_text, text)
+    if index != -1:
+        print("成功")
+        ser.write(b'go')
+    else:
+        print("未找到")
+    # for keyword in store_text:
+    #     if keyword in text:
+    #         print("成功")
+    #         ser.write(b'go')
+    #         return
+    # return
+
+def binary_search(arr, target):
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] < target:
+            low = mid + 1
+        elif arr[mid] > target:
+            high = mid - 1
+        else:
+            return mid
+    return -1
+
 
 
 with open(csv_path, newline='', encoding='utf-8') as csvfile:
@@ -62,9 +76,6 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
 
 
 Text=Voice_To_Text(10)
-# words=Text.split()
-# for word in words:
-#     Scoring(word)
 Scoring(Text)
 
 
