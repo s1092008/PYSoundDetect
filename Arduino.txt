@@ -1,4 +1,4 @@
-#define Relay 9
+#define Relay 8
 String str;
 void setup() {
   pinMode(Relay, OUTPUT);

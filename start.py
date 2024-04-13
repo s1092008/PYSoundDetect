@@ -9,7 +9,6 @@ def waitforsign():
             line = ser.readline().decode('utf-8').rstrip()
             if line is not None:
                 subprocess.Popen(["python", "Detect.py"])
-                print('ohoh')
                 
 try:
     if not ser.is_open:
