@@ -10,7 +10,11 @@ import keyboard
 
 #atleast Move
 
-ser=serial.Serial("COM",9600)
+try:
+    ser = serial.Serial('COM3', 9600)
+except serial.SerialException as e:
+    print(f"串列通訊連接失敗: {e}")
+    exit()
 recognizer = sr.Recognizer()
 microphone = sr.Microphone()
 
