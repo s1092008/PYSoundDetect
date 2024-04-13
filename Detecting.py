@@ -3,6 +3,8 @@ import speech_recognition as sr
 import serial
 import csv
 import keyboard
+import subprocess
+import sys
 import time
 #大綱
 #run時先把CSV中的目標物先都存好
@@ -38,21 +40,35 @@ def keyboard_detect():
     elif keyboard.is_pressed('w'):
         if keyboard_switch is True:
             keyboard_switch=not keyboard_switch
-            
+
+
+def restart_program():
+    python_path = sys.executable  # 获取当前 Python 解释器的路径
+    subprocess.Popen([python_path] + sys.argv)  # 启动一个新的 Python 进程，传入当前脚本的路径和参数
+    sys.exit()  # 退出当前程序
+
+
+
 def audio_detect(audio):
-    global is_audio_detect_running
-    if is_audio_detect_running:
-        return
-    is_audio_detect_running = True
+    # global is_audio_detect_running
+    # if is_audio_detect_running:
+    #     return
+    # is_audio_detect_running = True
+    global recognizer
     try:
         text = recognizer.recognize_google(audio, language='zh-TW')
+        print(text)
         for keyword in store_text: 
             if keyword in text:
                 ser.write(b'go')
     except sr.UnknownValueError:
-        return
+        print("nono")
+        restart_program()
     finally:
-        is_audio_detect_running = False
+        # is_audio_detect_running = False
+        print("exit")
+        recognizer = sr.Recognizer()
+
 
 while True:
     if ser.in_waiting > 0:
@@ -63,6 +79,8 @@ while True:
     with microphone as source:
             recognizer.adjust_for_ambient_noise(source)  
             audio = recognizer.listen(source)
+            # if audio:
+            #     print(audio)
             audio_detect(audio)
                 
             
