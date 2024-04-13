@@ -20,7 +20,7 @@ except serial.SerialException as e:
     exit()
 recognizer = sr.Recognizer()
 microphone = sr.Microphone()
-timer = threading.Timer(50, timeout_callback)
+
 
 
 
@@ -41,7 +41,7 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
 
 def timeout_callback():
     restart_program()
-    
+timer = threading.Timer(50, timeout_callback)
 
 def restart_timer():
     global timer
