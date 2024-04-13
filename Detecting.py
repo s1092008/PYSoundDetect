@@ -3,6 +3,7 @@ import speech_recognition as sr
 import serial
 import csv
 import keyboard
+import time
 #大綱
 #run時先把CSV中的目標物先都存好
 #當麥克風收音的時候辨識 #linear search O(N^M^K) N為目標數 M為目標內容長度 K為輸入長度 #如果用Hash bucket去分.....
@@ -19,7 +20,7 @@ recognizer = sr.Recognizer()
 microphone = sr.Microphone()
 
 keyboard_switch=False
-
+is_audio_detect_running = False
 #get from csv
 csv_path="store.csv"
 store_text=[]
@@ -38,7 +39,21 @@ def keyboard_detect():
         if keyboard_switch is True:
             keyboard_switch=not keyboard_switch
             
-        
+def audio_detect(audio):
+    global is_audio_detect_running
+    if is_audio_detect_running:
+        return
+    is_audio_detect_running = True
+    try:
+        text = recognizer.recognize_google(audio, language='zh-TW')
+        for keyword in store_text: 
+            if keyword in text:
+                ser.write(b'go')
+    except sr.UnknownValueError:
+        return
+    finally:
+        is_audio_detect_running = False
+
 while True:
     if ser.in_waiting > 0:
        ser.reset_input_buffer()
@@ -48,11 +63,9 @@ while True:
     with microphone as source:
             recognizer.adjust_for_ambient_noise(source)  
             audio = recognizer.listen(source)
-            if audio:
-                text = recognizer.recognize_google(audio, language='zh-TW')
-                for keyword in store_text: 
-                    if keyword in text:
-                        ser.write(b'go')
+            audio_detect(audio)
+                
+            
 
 
 
