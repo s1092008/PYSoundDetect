@@ -12,12 +12,8 @@ import time
 #當麥克風收音的時候辨識 #linear search O(N^M^K) N為目標數 M為目標內容長度 K為輸入長度 #如果用Hash bucket去分.....
 #如果有 就serial write 
 #atleast Move
+time.sleep(0.5)
 
-try:
-    ser = serial.Serial('COM3', 9600)
-except serial.SerialException as e:
-    print(f"串列通訊連接失敗: {e}")
-    exit()
 recognizer = sr.Recognizer()
 microphone = sr.Microphone()
 
@@ -36,17 +32,24 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
   for row in rows:
     store_text.extend(row)
     
-
+def restart_program():
+    python_path = sys.executable  
+    timer.cancel()
+    if ser:
+        ser.close()
+    subprocess.Popen([python_path] + sys.argv)
+    print('RESTART')
+    sys.exit()  
 
 
 def timeout_callback():
     restart_program()
-timer = threading.Timer(50, timeout_callback)
+timer = threading.Timer(15, timeout_callback)
 
 def restart_timer():
     global timer
     timer.cancel() 
-    timer = threading.Timer(50, timeout_callback)  
+    timer = threading.Timer(15, timeout_callback)  
     timer.start() 
 
 
@@ -61,10 +64,7 @@ def keyboard_detect():
             keyboard_switch=not keyboard_switch
 
 
-def restart_program():
-    python_path = sys.executable  
-    subprocess.Popen([python_path] + sys.argv)  
-    sys.exit()  
+
 
 
 
@@ -82,13 +82,20 @@ def audio_detect(audio):
             if keyword in text:
                 ser.write(b'go')
     except sr.UnknownValueError:
-        print("nono")
+        print("UnknownValueError")
         restart_program()
     finally:
         # is_audio_detect_running = False\
-        print("exit")
+        print("stop recognize")
         recognizer = sr.Recognizer()
 
+
+try:
+    ser = serial.Serial('COM3', 9600)
+except serial.SerialException as e:
+    print(f"串列通訊連接失敗: {e}")
+    restart_program()
+    exit()
 
 while True:
     if ser.in_waiting > 0:
@@ -97,7 +104,7 @@ while True:
     keyboard_detect()
                 
     with microphone as source:
-            recognizer.adjust_for_ambient_noise(source)  
+            # recognizer.adjust_for_ambient_noise(source)  
             audio = recognizer.listen(source)
             # if audio:
             #     print(audio)
