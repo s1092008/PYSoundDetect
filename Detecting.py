@@ -5,12 +5,12 @@ import csv
 import keyboard
 import subprocess
 import sys
+import threading
 import time
 #大綱
 #run時先把CSV中的目標物先都存好
 #當麥克風收音的時候辨識 #linear search O(N^M^K) N為目標數 M為目標內容長度 K為輸入長度 #如果用Hash bucket去分.....
 #如果有 就serial write 
-
 #atleast Move
 
 try:
@@ -20,6 +20,11 @@ except serial.SerialException as e:
     exit()
 recognizer = sr.Recognizer()
 microphone = sr.Microphone()
+timer = threading.Timer(50, timeout_callback)
+
+
+
+
 
 keyboard_switch=False
 is_audio_detect_running = False
@@ -31,6 +36,20 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
   for row in rows:
     store_text.extend(row)
     
+
+
+
+def timeout_callback():
+    restart_program()
+    
+
+def restart_timer():
+    global timer
+    timer.cancel() 
+    timer = threading.Timer(50, timeout_callback)  
+    timer.start() 
+
+
 def keyboard_detect():
     global keyboard_switch
     if keyboard.is_pressed('q'):
@@ -43,9 +62,9 @@ def keyboard_detect():
 
 
 def restart_program():
-    python_path = sys.executable  # 获取当前 Python 解释器的路径
-    subprocess.Popen([python_path] + sys.argv)  # 启动一个新的 Python 进程，传入当前脚本的路径和参数
-    sys.exit()  # 退出当前程序
+    python_path = sys.executable  
+    subprocess.Popen([python_path] + sys.argv)  
+    sys.exit()  
 
 
 
@@ -55,6 +74,7 @@ def audio_detect(audio):
     #     return
     # is_audio_detect_running = True
     global recognizer
+    restart_timer()
     try:
         text = recognizer.recognize_google(audio, language='zh-TW')
         print(text)
@@ -65,7 +85,7 @@ def audio_detect(audio):
         print("nono")
         restart_program()
     finally:
-        # is_audio_detect_running = False
+        # is_audio_detect_running = False\
         print("exit")
         recognizer = sr.Recognizer()
 
