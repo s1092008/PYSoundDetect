@@ -33,6 +33,7 @@ with open(csv_path, newline='', encoding='utf-8') as csvfile:
     store_text.extend(row)
     
 def restart_program():
+    global ser
     python_path = sys.executable  
     timer.cancel()
     if ser:
@@ -44,12 +45,11 @@ def restart_program():
 
 def timeout_callback():
     restart_program()
-timer = threading.Timer(15, timeout_callback)
 
 def restart_timer():
     global timer
     timer.cancel() 
-    timer = threading.Timer(15, timeout_callback)  
+    timer = threading.Timer(30, timeout_callback)  
     timer.start() 
 
 
@@ -90,26 +90,35 @@ def audio_detect(audio):
         recognizer = sr.Recognizer()
 
 
-try:
-    ser = serial.Serial('COM3', 9600)
-except serial.SerialException as e:
-    print(f"串列通訊連接失敗: {e}")
-    restart_program()
-    exit()
 
-while True:
-    if ser.in_waiting > 0:
-       ser.reset_input_buffer()
-       input = ser.readline().decode().strip()
-    keyboard_detect()
-                
-    with microphone as source:
-            # recognizer.adjust_for_ambient_noise(source)  
-            audio = recognizer.listen(source)
-            # if audio:
-            #     print(audio)
-            audio_detect(audio)
-                
+ser = None 
+timer = threading.Timer(15, timeout_callback)
+
+if __name__ == '__main__':
+    while True:
+        try:
+            ser = serial.Serial('COM3', 9600)
+            break  
+        except serial.SerialException as e:
+            print(f"串列通訊連接失敗: {e}")
+            time.sleep(0.5)  
+
+
+
+
+    while True:
+        # if ser.in_waiting > 0:
+        #     ser.reset_input_buffer()
+        #     input = ser.readline().decode().strip()
+        #     keyboard_detect()
+                    
+        with microphone as source:
+                recognizer.adjust_for_ambient_noise(source)  
+                audio = recognizer.listen(source)
+                # if audio:
+                #     print(audio)
+                audio_detect(audio)
+                    
             
 
 
