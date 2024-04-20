@@ -78,7 +78,10 @@ def audio_detect(audio):
     try:
         text = recognizer.recognize_google(audio, language='zh-TW')
         print(text)
-        for keyword in store_text: 
+        
+        for keyword in store_text:
+            if text=='關閉':
+                sys.exit() 
             if keyword in text:
                 ser.write(b'go')
     except sr.UnknownValueError:
@@ -115,8 +118,6 @@ if __name__ == '__main__':
         with microphone as source:
                 recognizer.adjust_for_ambient_noise(source)  
                 audio = recognizer.listen(source)
-                # if audio:
-                #     print(audio)
                 audio_detect(audio)
                     
             
